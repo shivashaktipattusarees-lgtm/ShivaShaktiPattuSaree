@@ -1,3 +1,23 @@
-"scripts": {
-  "start": "node server.js"
+{
+  "name": "downloads",
+  "version": "1.0.0",
+  "description": "--- base_model: EleutherAI/gpt-neo-1.3B library_name: peft pipeline_tag: text-generation tags: - base_model:adapter:EleutherAI/gpt-neo-1.3B - lora - transformers ---",
+  "main": "event-planning-bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "axios": "^1.13.6",
+    "cloudinary": "^2.9.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "mongodb": "^7.1.0",
+    "multer": "^2.1.0",
+    "nodemailer": "^8.0.1"
+  }
 }
