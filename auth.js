@@ -3,7 +3,6 @@ require('dotenv').config(); // ✅ MUST be first — loads env before anything e
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
-const nodemailer = require('nodemailer');
 
 const app = express();
 app.use(express.json());
@@ -21,8 +20,6 @@ app.use(cors({
 const GOOGLE_CLIENT_ID     = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const GOOGLE_REDIRECT_URI  = process.env.GOOGLE_REDIRECT_URI;
-const SENDER_EMAIL         = process.env.SENDER_EMAIL;
-const SENDER_APP_PASSWORD  = process.env.SENDER_APP_PASSWORD;
 
 const ALLOWED_EMAILS = [
   'shivashaktipattusarees@gmail.com',
@@ -104,41 +101,46 @@ app.post('/auth/send-otp', async (req, res) => {
   };
 
   try {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: { user: SENDER_EMAIL, pass: SENDER_APP_PASSWORD }
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        from: 'Shivashakti Admin <onboarding@resend.dev>',
+        to: email,
+        subject: '🔐 Shivashakti Admin OTP',
+        html: `
+          <div style="font-family:Georgia,serif;max-width:480px;margin:auto;
+                      background:#fdf6ec;border:1px solid #c9a84c;
+                      border-radius:12px;padding:40px;text-align:center;">
+            <h2 style="color:#8b0000;letter-spacing:2px;margin-bottom:4px;">
+              Shivashakti Pattu Sarees
+            </h2>
+            <p style="color:#8b6040;font-size:0.85rem;margin-bottom:30px;">
+              Admin Panel · One-Time Password
+            </p>
+            <p style="color:#3d1f00;font-size:1rem;margin-bottom:16px;">Your secure OTP is:</p>
+            <div style="background:#8b0000;color:#e2c06a;
+                        font-size:2.8rem;font-weight:700;letter-spacing:14px;
+                        padding:20px 30px;border-radius:10px;
+                        display:inline-block;margin-bottom:24px;">
+              ${otp}
+            </div>
+            <p style="color:#8b6040;font-size:0.88rem;line-height:1.7;margin-bottom:10px;">
+              Valid for <strong>5 minutes</strong> only.<br>Do not share this with anyone.
+            </p>
+            <p style="color:#c0392b;font-size:0.82rem;">
+              If you didn't request this, ignore this email.
+            </p>
+          </div>
+        `
+      })
     });
 
-    await transporter.sendMail({
-      from:    SENDER_EMAIL,
-      to:      email,
-      subject: '🔐 Shivashakti Admin OTP',
-      html: `
-        <div style="font-family:Georgia,serif;max-width:480px;margin:auto;
-                    background:#fdf6ec;border:1px solid #c9a84c;
-                    border-radius:12px;padding:40px;text-align:center;">
-          <h2 style="color:#8b0000;letter-spacing:2px;margin-bottom:4px;">
-            Shivashakti Pattu Sarees
-          </h2>
-          <p style="color:#8b6040;font-size:0.85rem;margin-bottom:30px;">
-            Admin Panel · One-Time Password
-          </p>
-          <p style="color:#3d1f00;font-size:1rem;margin-bottom:16px;">Your secure OTP is:</p>
-          <div style="background:#8b0000;color:#e2c06a;
-                      font-size:2.8rem;font-weight:700;letter-spacing:14px;
-                      padding:20px 30px;border-radius:10px;
-                      display:inline-block;margin-bottom:24px;">
-            ${otp}
-          </div>
-          <p style="color:#8b6040;font-size:0.88rem;line-height:1.7;margin-bottom:10px;">
-            Valid for <strong>5 minutes</strong> only.<br>Do not share this with anyone.
-          </p>
-          <p style="color:#c0392b;font-size:0.82rem;">
-            If you didn't request this, ignore this email.
-          </p>
-        </div>
-      `
-    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.message || 'Resend API error');
 
     console.log(`[AUTH] OTP sent to ${email}`);
     res.json({ message: 'OTP sent successfully' });
@@ -183,17 +185,16 @@ app.post('/auth/verify-otp', (req, res) => {
 // HELPER: Popup HTML
 // ══════════════════════════════════════════════
 function popupHtml({ email = '', name = '', picture = '', error = '' }) {
-  const payload = JSON.stringify({ email, name, picture, error });
+  // ✅ Redirect to /auth/callback with data in URL — avoids COOP/postMessage issues
+  const e = encodeURIComponent;
+  const query = `email=${e(email)}&name=${e(name)}&picture=${e(picture)}&error=${e(error)}`;
   return `<!DOCTYPE html>
 <html>
 <head><title>Authenticating…</title></head>
 <body style="font-family:sans-serif;text-align:center;padding:60px;color:#555;background:#fdf6ec;">
-  <p>${error ? '❌ ' + error : '✅ Signed in! Closing window…'}</p>
+  <p>${error ? '❌ ' + error : '✅ Signed in! Redirecting…'}</p>
   <script>
-    // ✅ Post message to ALL possible origins — works on localhost AND Render
-    // ✅ Use '*' as target — works on localhost AND Render
-    try { window.opener && window.opener.postMessage(${payload}, '*'); } catch(e) {}
-    setTimeout(() => window.close(), 800);
+    window.location.replace('/auth/callback?' + '${query}');
   <\/script>
 </body>
 </html>`;
