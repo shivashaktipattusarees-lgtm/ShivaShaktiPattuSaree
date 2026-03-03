@@ -82,7 +82,7 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
       name,
       price,
       image_url: result.secure_url,
-      category   // saved exactly as sent from admin form
+      category
     };
 
     const inserted = await products_collection.insertOne(product_data);
@@ -96,11 +96,9 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
   }
 });
 
-// Get all products (with optional category filter — case-insensitive)
+// Get all products (with optional category filter)
 app.get('/api/products', async (req, res) => {
-  // ✅ Add these headers to prevent 304 caching
   res.set('Cache-Control', 'no-store');
-  
   try {
     const { category } = req.query;
     const query = category
@@ -125,22 +123,36 @@ app.delete('/api/products/:id', async (req, res) => {
 });
 
 // ═════════════════════════════════════
-// AUTH PROXY → forwards to auth.js on port 5001
+// AUTH PROXY → forwards to auth.js on port 5001 internally
 // ═════════════════════════════════════
 const AUTH_SERVER = `http://localhost:${process.env.AUTH_PORT || 5001}`;
 
-// Proxy: Google OAuth redirect
+// ✅ FIXED: Build Google OAuth URL here and redirect to Google directly
+// DO NOT redirect to localhost:5001 — browser can't reach that on Render
 app.get('/auth/google', (req, res) => {
-  res.redirect(`${AUTH_SERVER}/auth/google`);
+  const params = new URLSearchParams({
+    client_id:     process.env.GOOGLE_CLIENT_ID,
+    redirect_uri:  process.env.GOOGLE_REDIRECT_URI,
+    response_type: 'code',
+    scope:         'openid email profile',
+    access_type:   'offline',
+    prompt:        'consent'
+  });
+  res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params}`);
 });
 
-// Proxy: Google OAuth callback
+// ✅ Proxy: Google OAuth callback — handled internally, not redirected to browser
 app.get('/auth/google/callback', async (req, res) => {
   try {
-    const response = await axios.get(`${AUTH_SERVER}/auth/google/callback`, { params: req.query });
+    const response = await axios.get(`${AUTH_SERVER}/auth/google/callback`, {
+      params: req.query,
+      // ✅ Don't follow redirects — get raw response
+      maxRedirects: 0,
+      validateStatus: status => status < 400
+    });
     res.send(response.data);
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    res.status(500).send(`<script>window.opener && window.opener.postMessage({error:'${e.message}'},'*');window.close();</script>`);
   }
 });
 
