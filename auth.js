@@ -191,14 +191,8 @@ function popupHtml({ email = '', name = '', picture = '', error = '' }) {
   <p>${error ? '❌ ' + error : '✅ Signed in! Closing window…'}</p>
   <script>
     // ✅ Post message to ALL possible origins — works on localhost AND Render
-    const targets = [
-      'http://127.0.0.1:5000',
-      'http://localhost:5000',
-      'https://shivashaktipattusaree.onrender.com'
-    ];
-    targets.forEach(origin => {
-      try { window.opener && window.opener.postMessage(${payload}, origin); } catch(e) {}
-    });
+    // ✅ Use '*' as target — works on localhost AND Render
+    try { window.opener && window.opener.postMessage(${payload}, '*'); } catch(e) {}
     setTimeout(() => window.close(), 800);
   <\/script>
 </body>
