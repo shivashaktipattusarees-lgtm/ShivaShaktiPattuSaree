@@ -1,29 +1,23 @@
+require('dotenv').config(); // ✅ MUST be first — loads env before anything else
+
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const nodemailer = require('nodemailer');
-const crypto = require('crypto');
+// ✅ Removed unused 'crypto' import
 
 const app = express();
 app.use(express.json());
 app.use(cors({ origin: ['http://127.0.0.1:5000', 'http://localhost:5000'] }));
 
 // ══════════════════════════════════════════════
-// ✅ CONFIGURE THESE VALUES
+// ENV VARIABLES
 // ══════════════════════════════════════════════
-require('dotenv').config();
-
 const GOOGLE_CLIENT_ID     = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const GOOGLE_REDIRECT_URI  = process.env.GOOGLE_REDIRECT_URI;
 const SENDER_EMAIL         = process.env.SENDER_EMAIL;
 const SENDER_APP_PASSWORD  = process.env.SENDER_APP_PASSWORD;
-app.listen(process.env.AUTH_PORT || 5001, () => {
-  console.log('=============================================');
-  console.log('  Shivashakti Auth Server — PORT 5001');
-  console.log('=============================================');
-});
-
 
 const ALLOWED_EMAILS = [
   'shivashaktipattusarees@gmail.com',
@@ -31,11 +25,11 @@ const ALLOWED_EMAILS = [
 ];
 
 // ══════════════════════════════════════════════
-// OTP Settings
+// OTP SETTINGS
 // ══════════════════════════════════════════════
 const OTP_EXPIRY_SECONDS = 300;
 const MAX_OTP_ATTEMPTS   = 5;
-const otpStore = {}; // { email: { otp, expiresAt, attempts } }
+const otpStore = {};
 
 // ══════════════════════════════════════════════
 // ROUTES
@@ -43,9 +37,9 @@ const otpStore = {}; // { email: { otp, expiresAt, attempts } }
 
 // Health check
 app.get('/', (req, res) => res.send('Auth server running'));
-app.get('/auth/health', (req, res) => res.json({ status: 'auth server running', port: 5001 }));
+app.get('/auth/health', (req, res) => res.json({ status: 'auth server running', port: process.env.AUTH_PORT || 5001 }));
 
-// ── Google OAuth redirect ──
+// ── Google OAuth Redirect ──
 app.get('/auth/google', (req, res) => {
   const params = new URLSearchParams({
     client_id:     GOOGLE_CLIENT_ID,
@@ -65,7 +59,6 @@ app.get('/auth/google/callback', async (req, res) => {
   if (error || !code) return res.send(popupHtml({ error: error || 'Login cancelled' }));
 
   try {
-    // Exchange code for tokens
     const tokenRes = await axios.post('https://oauth2.googleapis.com/token', {
       code,
       client_id:     GOOGLE_CLIENT_ID,
@@ -77,7 +70,6 @@ app.get('/auth/google/callback', async (req, res) => {
     const tokens = tokenRes.data;
     if (tokens.error) return res.send(popupHtml({ error: tokens.error_description || tokens.error }));
 
-    // Get user info
     const userRes = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
       headers: { Authorization: `Bearer ${tokens.access_token}` }
     });
@@ -183,7 +175,7 @@ app.post('/auth/verify-otp', (req, res) => {
 });
 
 // ══════════════════════════════════════════════
-// Helper: popup HTML
+// HELPER: Popup HTML
 // ══════════════════════════════════════════════
 function popupHtml({ email = '', name = '', picture = '', error = '' }) {
   const payload = JSON.stringify({ email, name, picture, error });
@@ -204,8 +196,11 @@ function popupHtml({ email = '', name = '', picture = '', error = '' }) {
 }
 
 // ══════════════════════════════════════════════
-app.listen(5001, () => {
+// START SERVER — Single app.listen only
+// ══════════════════════════════════════════════
+const AUTH_PORT = process.env.AUTH_PORT || 5001;
+app.listen(AUTH_PORT, () => {
   console.log('=============================================');
-  console.log('  Shivashakti Auth Server — PORT 5001');
+  console.log(`  Shivashakti Auth Server — PORT ${AUTH_PORT}`);
   console.log('=============================================');
 });

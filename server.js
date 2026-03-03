@@ -3,10 +3,9 @@ require('dotenv').config(); // MUST be first
 const express = require('express');
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 const cors = require('cors');
 const axios = require('axios');
-const nodemailer = require('nodemailer');
 const path = require('path');
 
 const app = express();
@@ -24,7 +23,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // ═════════════════════════════════════
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
+  api_key:    process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
@@ -40,7 +39,7 @@ MongoClient.connect(MONGO_URI)
     products_collection = db.collection('products');
     console.log('✅ Connected to MongoDB');
   })
-  .catch(err => console.error('MongoDB error:', err));
+  .catch(err => console.error('❌ MongoDB error:', err));
 
 // ═════════════════════════════════════
 // MULTER
@@ -62,6 +61,8 @@ app.get('/admin', (req, res) => {
 // ═════════════════════════════════════
 // PRODUCT APIs
 // ═════════════════════════════════════
+
+// Upload product
 app.post('/api/upload', upload.single('image'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No image uploaded' });
 
@@ -81,12 +82,13 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
       name,
       price,
       image_url: result.secure_url,
-      category
+      category   // saved exactly as sent from admin form
     };
 
     const inserted = await products_collection.insertOne(product_data);
     product_data._id = inserted.insertedId.toString();
 
+    console.log(`[API] Product uploaded: "${name}" — category: "${category}"`);
     res.status(201).json({ message: 'Product uploaded successfully!', product: product_data });
 
   } catch (e) {
@@ -94,9 +96,17 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
   }
 });
 
+// Get all products (with optional category filter — case-insensitive)
 app.get('/api/products', async (req, res) => {
+  // ✅ Add these headers to prevent 304 caching
+  res.set('Cache-Control', 'no-store');
+  
   try {
-    const docs = await products_collection.find({}).toArray();
+    const { category } = req.query;
+    const query = category
+      ? { category: { $regex: new RegExp('^' + category.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$', 'i') } }
+      : {};
+    const docs = await products_collection.find(query).toArray();
     docs.forEach(d => d._id = d._id.toString());
     res.json(docs);
   } catch (e) {
@@ -104,93 +114,83 @@ app.get('/api/products', async (req, res) => {
   }
 });
 
-// ═════════════════════════════════════
-// AUTH SECTION
-// ═════════════════════════════════════
-const GOOGLE_CLIENT_ID     = process.env.GOOGLE_CLIENT_ID;
-const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
-const GOOGLE_REDIRECT_URI  = process.env.GOOGLE_REDIRECT_URI;
-const SENDER_EMAIL         = process.env.SENDER_EMAIL;
-const SENDER_APP_PASSWORD  = process.env.SENDER_APP_PASSWORD;
-
-const ALLOWED_EMAILS = [
-  'shivashaktipattusarees@gmail.com',
-  'second-admin@gmail.com'
-];
-
-const OTP_EXPIRY_SECONDS = 300;
-const MAX_OTP_ATTEMPTS   = 5;
-const otpStore = {};
-
-// ── Google OAuth Redirect ──
-app.get('/auth/google', (req, res) => {
-  const params = new URLSearchParams({
-    client_id: GOOGLE_CLIENT_ID,
-    redirect_uri: GOOGLE_REDIRECT_URI,
-    response_type: 'code',
-    scope: 'openid email profile'
-  });
-  res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params}`);
-});
-
-// ── Send OTP ──
-app.post('/auth/send-otp', async (req, res) => {
-  const email = (req.body.email || '').toLowerCase();
-
-  if (!ALLOWED_EMAILS.includes(email))
-    return res.status(403).json({ error: 'Unauthorised email' });
-
-  const otp = String(Math.floor(100000 + Math.random() * 900000));
-
-  otpStore[email] = {
-    otp,
-    expiresAt: Date.now() + OTP_EXPIRY_SECONDS * 1000,
-    attempts: 0
-  };
-
+// Delete product
+app.delete('/api/products/:id', async (req, res) => {
   try {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: { user: SENDER_EMAIL, pass: SENDER_APP_PASSWORD }
-    });
-
-    await transporter.sendMail({
-      from: SENDER_EMAIL,
-      to: email,
-      subject: 'Shivashakti Admin OTP',
-      text: `Your OTP is ${otp}. Valid for 5 minutes.`
-    });
-
-    res.json({ message: 'OTP sent successfully' });
-
+    await products_collection.deleteOne({ _id: new ObjectId(req.params.id) });
+    res.json({ message: 'Product deleted successfully' });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
 });
 
-// ── Verify OTP ──
-app.post('/auth/verify-otp', (req, res) => {
-  const email = (req.body.email || '').toLowerCase();
-  const otp = req.body.otp;
+// ═════════════════════════════════════
+// AUTH PROXY → forwards to auth.js on port 5001
+// ═════════════════════════════════════
+const AUTH_SERVER = `http://localhost:${process.env.AUTH_PORT || 5001}`;
 
-  const record = otpStore[email];
-  if (!record) return res.status(400).json({ error: 'No OTP found' });
+// Proxy: Google OAuth redirect
+app.get('/auth/google', (req, res) => {
+  res.redirect(`${AUTH_SERVER}/auth/google`);
+});
 
-  if (Date.now() > record.expiresAt)
-    return res.status(400).json({ error: 'OTP expired' });
+// Proxy: Google OAuth callback
+app.get('/auth/google/callback', async (req, res) => {
+  try {
+    const response = await axios.get(`${AUTH_SERVER}/auth/google/callback`, { params: req.query });
+    res.send(response.data);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
 
-  if (otp !== record.otp)
-    return res.status(400).json({ error: 'Incorrect OTP' });
+// Proxy: Send OTP
+app.post('/auth/send-otp', async (req, res) => {
+  try {
+    const response = await axios.post(`${AUTH_SERVER}/auth/send-otp`, req.body);
+    res.json(response.data);
+  } catch (e) {
+    const status = e.response?.status || 500;
+    const error  = e.response?.data  || { error: e.message };
+    res.status(status).json(error);
+  }
+});
 
-  delete otpStore[email];
-  res.json({ success: true });
+// Proxy: Verify OTP
+app.post('/auth/verify-otp', async (req, res) => {
+  try {
+    const response = await axios.post(`${AUTH_SERVER}/auth/verify-otp`, req.body);
+    res.json(response.data);
+  } catch (e) {
+    const status = e.response?.status || 500;
+    const error  = e.response?.data  || { error: e.message };
+    res.status(status).json(error);
+  }
+});
+
+// Proxy: Auth health check
+app.get('/auth/health', async (req, res) => {
+  try {
+    const response = await axios.get(`${AUTH_SERVER}/auth/health`);
+    res.json(response.data);
+  } catch (e) {
+    res.status(500).json({ error: 'Auth server unreachable' });
+  }
 });
 
 // ═════════════════════════════════════
-// SINGLE PORT (RENDER SAFE)
+// HEALTH CHECK
+// ═════════════════════════════════════
+app.get('/health', (req, res) => {
+  res.json({ status: 'backend server running', port: process.env.PORT || 5000 });
+});
+
+// ═════════════════════════════════════
+// START SERVER
 // ═════════════════════════════════════
 const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log('=============================================');
+  console.log(`  Shivashakti Backend Server — PORT ${PORT}`);
+  console.log('=============================================');
 });

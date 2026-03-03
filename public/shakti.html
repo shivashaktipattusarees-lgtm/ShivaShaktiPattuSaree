@@ -19,7 +19,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Lato', sans-serif; background-color: var(--cream); color: var(--text); overflow-x: hidden; }
 
-        /* ── NAV ── */
         nav {
             position: fixed; top: 0; left: 0; right: 0; z-index: 100;
             background: rgba(26,10,0,0.97); backdrop-filter: blur(8px);
@@ -35,19 +34,16 @@
         .nav-links a:hover { color: var(--gold); }
         .nav-links a.active { color: var(--gold); border-bottom-color: var(--gold); }
 
-        /* ── PAGES ── */
         .page { display: none; min-height: 100vh; padding-top: 60px; animation: fadeIn 0.4s ease; }
         .page.active { display: block; }
         #page-home.active { display: flex; }
         @keyframes fadeIn { from{opacity:0;transform:translateY(12px);} to{opacity:1;transform:translateY(0);} }
 
-        /* ── SHARED ── */
         .section-wrapper { max-width: 1100px; margin: 0 auto; padding: 70px 24px; }
         .section-label { font-family:'Cinzel',serif; font-size:0.72rem; letter-spacing:5px; text-transform:uppercase; color:var(--crimson); margin-bottom:12px; }
         .section-title { font-family:'Cormorant Garamond',serif; font-size:clamp(2rem,4vw,3rem); font-weight:600; color:var(--dark); line-height:1.2; }
         .divider { width:60px; height:2px; background:linear-gradient(90deg,var(--crimson),var(--gold)); margin:20px 0 30px; }
 
-        /* ══ HOME ══ */
         #page-home {
             background: linear-gradient(160deg,rgba(139,0,0,0.88) 0%,rgba(26,10,0,0.94) 60%),
                 url('https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=1400&q=80') center/cover no-repeat;
@@ -65,7 +61,6 @@
         .quick-link { border:1px solid rgba(201,168,76,0.4); color:var(--gold-light); padding:10px 26px; border-radius:4px; font-size:0.8rem; letter-spacing:2px; text-transform:uppercase; cursor:pointer; background:rgba(255,255,255,0.04); transition:background 0.3s,border-color 0.3s; user-select:none; }
         .quick-link:hover { background:rgba(201,168,76,0.15); border-color:rgba(201,168,76,0.7); }
 
-        /* ══ ABOUT ══ */
         #page-about { background: white; }
         .about-grid { display:grid; grid-template-columns:1fr 1fr; gap:70px; align-items:center; }
         .about-visual { position:relative; }
@@ -87,7 +82,6 @@
         .why-item h3 { font-family:'Cinzel',serif; font-size:0.9rem; letter-spacing:2px; color:var(--gold-light); margin-bottom:10px; }
         .why-item p { font-size:0.9rem; color:rgba(245,233,200,0.7); line-height:1.7; }
 
-        /* ══ COLLECTIONS ══ */
         #page-collections { background: var(--cream); }
         .varieties-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px; margin-top:40px; }
         .variety-card {
@@ -95,27 +89,19 @@
             text-align:center; background:white; cursor:pointer;
             transition:border-color 0.3s, transform 0.3s, box-shadow 0.3s;
         }
-        .variety-card:hover { border-color:var(--gold); transform:translateY(-4px); box-shadow:0 12px 30px rgba(139,0,0,0.1); }
+        .variety-card:hover, .variety-card.active-filter { border-color:var(--gold); transform:translateY(-4px); box-shadow:0 12px 30px rgba(139,0,0,0.1); background: var(--gold-pale); }
         .variety-icon { font-size:2rem; margin-bottom:14px; }
         .variety-card h3 { font-family:'Cormorant Garamond',serif; font-size:1.25rem; font-weight:600; color:var(--dark); margin-bottom:8px; }
         .variety-card p { font-size:0.88rem; color:#6b4020; line-height:1.65; }
 
-        /* ── Filter label bar ── */
         .filter-bar {
             max-width: 1100px; margin: 0 auto; padding: 0 24px 10px;
             display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
         }
-        .filter-label {
-            font-family: 'Cinzel', serif; font-size: 0.72rem; letter-spacing: 3px;
-            color: var(--crimson); text-transform: uppercase;
-        }
-        .filter-clear {
-            font-size: 0.78rem; color: #8b6040; cursor: pointer; text-decoration: underline;
-            background: none; border: none; font-family: 'Lato', sans-serif;
-        }
+        .filter-label { font-family: 'Cinzel', serif; font-size: 0.72rem; letter-spacing: 3px; color: var(--crimson); text-transform: uppercase; }
+        .filter-clear { font-size: 0.78rem; color: #8b6040; cursor: pointer; text-decoration: underline; background: none; border: none; font-family: 'Lato', sans-serif; }
         .filter-clear:hover { color: var(--crimson); }
 
-        /* ── Products ── */
         .products-strip { background: white; padding: 60px 24px; }
         .products-inner { max-width: 1100px; margin: 0 auto; }
         .products-grid { display:flex; flex-wrap:wrap; gap:28px; justify-content:center; margin-top:40px; }
@@ -125,8 +111,8 @@
         .product-info { padding:18px 20px 22px; }
         .product-info h3 { font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-weight:600; color:var(--dark); margin-bottom:6px; }
         .product-price { font-family:'Cinzel',serif; font-size:1.1rem; color:var(--crimson); font-weight:700; }
+        .product-category-tag { display:inline-block; font-size:0.72rem; letter-spacing:1px; background:var(--gold-pale); color:var(--crimson); border-radius:20px; padding:3px 10px; margin-bottom:8px; font-family:'Cinzel',serif; }
 
-        /* ══ CONTACT ══ */
         #page-contact { background: white; }
         .contact-hero { background:linear-gradient(135deg,var(--crimson) 0%,#5c0000 100%); padding:70px 24px; text-align:center; }
         .contact-hero p { color:rgba(245,233,200,0.8); font-size:1rem; line-height:1.7; max-width:520px; margin:0 auto; }
@@ -152,36 +138,18 @@
             .about-visual-inner img { height:280px; }
             .about-badge { right:10px; }
         }
-		.add-to-cart-btn {
-    width: 100%;
-    margin-top: 10px;
-    padding: 10px;
-    background: #8b2020;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 600;
-    transition: background 0.2s;
-}
-.add-to-cart-btn:hover { background: #6b1818; }
-.cart-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 0;
-    border-bottom: 1px solid #eee;
-}
-.cart-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; }
-.cart-item-info { flex: 1; display: flex; flex-direction: column; gap: 4px; font-size: 0.9rem; }
-.cart-item-controls { display: flex; align-items: center; gap: 6px; }
-.cart-item-controls button { background:#f0e6d3;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;font-size:1rem; }
+
+        .add-to-cart-btn { width:100%; margin-top:10px; padding:10px; background:#8b2020; color:white; border:none; border-radius:6px; cursor:pointer; font-size:0.9rem; font-weight:600; transition:background 0.2s; }
+        .add-to-cart-btn:hover { background: #6b1818; }
+        .cart-item { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid #eee; }
+        .cart-item img { width:60px; height:60px; object-fit:cover; border-radius:6px; }
+        .cart-item-info { flex:1; display:flex; flex-direction:column; gap:4px; font-size:0.9rem; }
+        .cart-item-controls { display:flex; align-items:center; gap:6px; }
+        .cart-item-controls button { background:#f0e6d3; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:1rem; }
     </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
     <div class="nav-logo" onclick="showPage('home')">
         <img src="https://res.cloudinary.com/dwgxw2mlr/image/upload/v1772419246/dvb5pjvqauvaa9bucsol.jpg"
@@ -193,15 +161,13 @@
         <a onclick="showPage('about')" data-page="about">About Us</a>
         <a onclick="showPage('collections')" data-page="collections">Collections</a>
         <a onclick="showPage('contact')" data-page="contact">Contact</a>
-		<!-- Add this inside your <nav> -->
-<div class="cart-icon" onclick="openCart()" style="cursor:pointer;position:relative;display:inline-block">
-    🛒
-    <span id="cart-badge" style="display:none;position:absolute;top:-8px;right:-8px;background:red;color:white;border-radius:50%;padding:2px 6px;font-size:0.7rem;font-weight:bold">0</span>
-</div>
+        <div class="cart-icon" onclick="openCart()" style="cursor:pointer;position:relative;display:inline-block;margin-left:20px;">
+            🛒
+            <span id="cart-badge" style="display:none;position:absolute;top:-8px;right:-8px;background:red;color:white;border-radius:50%;padding:2px 6px;font-size:0.7rem;font-weight:bold">0</span>
+        </div>
     </div>
 </nav>
 
-<!-- ══════════ HOME PAGE ══════════ -->
 <div class="page" id="page-home">
     <svg class="hero-ornament" viewBox="0 0 200 40" fill="none">
         <line x1="0" y1="20" x2="75" y2="20" stroke="#c9a84c" stroke-width="1"/>
@@ -226,7 +192,6 @@
     </div>
 </div>
 
-<!-- ══════════ ABOUT PAGE ══════════ -->
 <div class="page" id="page-about">
     <div class="section-wrapper">
         <div class="about-grid">
@@ -269,30 +234,29 @@
     </div>
 </div>
 
-<!-- ══════════ COLLECTIONS PAGE ══════════ -->
-<!-- ✅ FIX: products-strip is NOW INSIDE page-collections -->
 <div class="page" id="page-collections">
     <div class="section-wrapper">
         <div class="section-label">What We Offer</div>
         <h2 class="section-title">Our Saree Varieties</h2>
         <div class="divider"></div>
         <div class="varieties-grid">
-            <div class="variety-card" onclick="filterByCategory('pure-pattu')">
+            <!-- ✅ FIXED: passing slugs that match MongoDB -->
+            <div class="variety-card" id="card-pure-pattu" onclick="filterByCategory('pure-pattu', this)">
                 <div class="variety-icon">🥻</div>
                 <h3>Pure Pattu</h3>
                 <p>100% pure silk sarees with rich texture and lustrous shine. Perfect for weddings and grand occasions.</p>
             </div>
-            <div class="variety-card" onclick="filterByCategory('half-mix-pattu')">
+            <div class="variety-card" id="card-half-mix-pattu" onclick="filterByCategory('half-mix-pattu', this)">
                 <div class="variety-icon">✨</div>
                 <h3>Half Mix Pattu</h3>
                 <p>Blended silk with beautiful drape — ideal for festivals, receptions, and celebrations.</p>
             </div>
-            <div class="variety-card" onclick="filterByCategory('imitation-pattu')">
+            <div class="variety-card" id="card-imitation-pattu" onclick="filterByCategory('imitation-pattu', this)">
                 <div class="variety-icon">🌸</div>
                 <h3>Imitation Pattu</h3>
                 <p>Affordable elegance without compromise. Stylish and lightweight for everyday special occasions.</p>
             </div>
-            <div class="variety-card" onclick="filterByCategory('cotton')">
+            <div class="variety-card" id="card-cotton" onclick="filterByCategory('cotton', this)">
                 <div class="variety-icon">🌿</div>
                 <h3>Cotton Sarees</h3>
                 <p>All varieties of premium cotton sarees — breathable, comfortable, and available in stunning designs.</p>
@@ -300,23 +264,19 @@
         </div>
     </div>
 
-    <!-- ✅ Filter bar shows which category is active -->
     <div class="filter-bar" id="filter-bar" style="display:none;">
         <span class="filter-label">Showing: <strong id="filter-name"></strong></span>
         <button class="filter-clear" onclick="clearFilter()">✕ Show All</button>
     </div>
 
-    <!-- ✅ Products strip is INSIDE page-collections so scrollIntoView works -->
     <div class="products-strip" id="products-strip">
         <div class="products-inner">
             <div class="section-label" id="products-section-label">Featured Products</div>
             <h2 class="section-title" id="products-section-title">Latest Arrivals</h2>
             <div class="divider"></div>
-
             <div class="products-grid" id="products-grid">
                 <div style="text-align:center;padding:40px;color:#8b6040;width:100%">⏳ Loading products...</div>
             </div>
-
             <p style="text-align:center;margin-top:40px;color:#8b6040;font-size:0.95rem;">
                 📞 Call <strong>9916067676</strong> or
                 <a href="https://chat.whatsapp.com/EUoLd2mJ9n8KDBqflgw7AI" target="_blank"
@@ -327,7 +287,6 @@
     </div>
 </div>
 
-<!-- ══════════ CONTACT PAGE ══════════ -->
 <div class="page" id="page-contact">
     <div class="contact-hero">
         <div class="section-label" style="color:var(--gold-light);">Reach Out</div>
@@ -357,193 +316,12 @@
     </div>
 </div>
 
-<!-- FOOTER -->
 <footer>
     <p>© 2026 <span>Shivashakti Pattu Sarees</span> · Weavers Colony, Hindupur · All Rights Reserved</p>
 </footer>
 
-<script>
-    const categoryNames = {
-        'pure-pattu':      'Pure Pattu',
-        'half-mix-pattu':  'Half Mix Pattu',
-        'imitation-pattu': 'Imitation Pattu',
-        'cotton':          'Cotton Sarees'
-    };
-
-    function showPage(pageId) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-        const target = document.getElementById('page-' + pageId);
-        if (target) { target.classList.add('active'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-        const link = document.querySelector(`.nav-links a[data-page="${pageId}"]`);
-        if (link) link.classList.add('active');
-        if (pageId === 'collections') loadProducts(); // load all on visit
-    }
-
-    // ✅ FILTER BY CATEGORY — scroll + fetch filtered products
- function filterByCategory(category) {
-    const categoryLabel = categoryNames[category] || category;
-
-    document.getElementById('products-strip').scrollIntoView({ behavior: 'smooth' });
-    document.getElementById('products-section-label').textContent = 'Filtered Results';
-    document.getElementById('products-section-title').textContent = categoryLabel;
-    document.getElementById('filter-bar').style.display = 'flex';
-    document.getElementById('filter-name').textContent = categoryLabel;
-
-    const grid = document.getElementById('products-grid');
-    grid.innerHTML = '<div style="text-align:center;padding:40px;color:#8b6040;width:100%">⏳ Loading products...</div>';
-
-    // ✅ Use categoryLabel (name) instead of raw category key
-    fetch(`/api/products?category=${encodeURIComponent(category)}`)
-        .then(res => res.json())
-        .then(products => renderProducts(products))
-        .catch(err => {
-            grid.innerHTML = '<div style="text-align:center;padding:40px;color:red;">❌ Failed to load. Make sure Flask server is running.</div>';
-            console.error(err);
-        });
-}
-
-    // ✅ RENDER PRODUCTS
-    function renderProducts(products) {
-    const grid = document.getElementById('products-grid');
-    if (products.length === 0) {
-        grid.innerHTML = '<div style="text-align:center;padding:40px;color:#8b6040;width:100%">No products found in this category.</div>';
-        return;
-    }
-    grid.innerHTML = products.map(product => `
-        <div class="product-card">
-            <img src="${product.image_url}" alt="${product.name}"
-                 onerror="this.src='https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500&q=80'">
-            <div class="product-info">
-                <h3>${product.name}</h3>
-                <p class="product-price">₹ ${Number(product.price).toLocaleString('en-IN')}</p>
-                <button class="add-to-cart-btn" onclick='addToCart(${JSON.stringify({name: product.name, price: product.price, image_url: product.image_url})})'>
-                    🛒 Add to Cart
-                </button>
-            </div>
-        </div>
-    `).join('');
-}
-
-  let cart = [];
-
-function addToCart(product) {
-    const existing = cart.find(i => i.name === product.name);
-    if (existing) {
-        existing.qty += 1;
-    } else {
-        cart.push({ ...product, qty: 1 });
-    }
-    updateCartBadge();
-    showCartToast(product.name);
-}
-
-function updateCartBadge() {
-    const total = cart.reduce((sum, i) => sum + i.qty, 0);
-    document.getElementById('cart-badge').textContent = total;
-    document.getElementById('cart-badge').style.display = total > 0 ? 'inline-block' : 'none';
-}
-
-function showCartToast(name) {
-    const toast = document.getElementById('cart-toast');
-    toast.textContent = `✅ "${name}" added to cart!`;
-    toast.style.display = 'block';
-    setTimeout(() => toast.style.display = 'none', 2000);
-}
-
-function openCart() {
-    const drawer = document.getElementById('cart-drawer');
-    const itemsEl = document.getElementById('cart-items');
-    const totalEl = document.getElementById('cart-total');
-
-    if (cart.length === 0) {
-        itemsEl.innerHTML = '<p style="text-align:center;color:#8b6040;padding:20px">Your cart is empty 🛒</p>';
-        totalEl.textContent = '';
-    } else {
-        itemsEl.innerHTML = cart.map((item, i) => `
-            <div class="cart-item">
-                <img src="${item.image_url}" onerror="this.src='https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=300&q=80'">
-                <div class="cart-item-info">
-                    <strong>${item.name}</strong>
-                    <span>₹ ${Number(item.price).toLocaleString('en-IN')} × ${item.qty}</span>
-                </div>
-                <div class="cart-item-controls">
-                    <button onclick="changeQty(${i}, -1)">−</button>
-                    <span>${item.qty}</span>
-                    <button onclick="changeQty(${i}, 1)">+</button>
-                    <button onclick="removeFromCart(${i})" style="color:red;margin-left:8px">🗑</button>
-                </div>
-            </div>
-        `).join('');
-        const total = cart.reduce((sum, i) => sum + (Number(i.price) * i.qty), 0);
-        totalEl.innerHTML = `<strong>Total: ₹ ${total.toLocaleString('en-IN')}</strong>`;
-    }
-    drawer.style.display = 'flex';
-}
-
-function closeCart() {
-    document.getElementById('cart-drawer').style.display = 'none';
-}
-
-function changeQty(index, delta) {
-    cart[index].qty += delta;
-    if (cart[index].qty <= 0) cart.splice(index, 1);
-    updateCartBadge();
-    openCart(); // re-render
-}
-
-function removeFromCart(index) {
-    cart.splice(index, 1);
-    updateCartBadge();
-    openCart();
-}
-
-function proceedToPayment() {
-    const total = cart.reduce((sum, i) => sum + (Number(i.price) * i.qty), 0);
-    const totalPaise = total * 100; // Razorpay uses paise
-
-    // ✅ When you have Razorpay keys, replace YOUR_KEY_ID below
-    var options = {
-        key: "YOUR_KEY_ID", // 🔑 Replace with your Razorpay key
-        amount: totalPaise,
-        currency: "INR",
-        name: "Your Saree Store",
-        description: "Saree Purchase",
-        handler: function (response) {
-            alert("✅ Payment successful! ID: " + response.razorpay_payment_id);
-            cart = [];
-            updateCartBadge();
-            closeCart();
-        },
-        prefill: { name: "", email: "", contact: "" },
-        theme: { color: "#8b2020" }
-    };
-    var rzp = new Razorpay(options);
-    rzp.open();
-}  // ✅ LOAD ALL PRODUCTS
-    async function loadProducts() {
-        const grid = document.getElementById('products-grid');
-        grid.innerHTML = '<div style="text-align:center;padding:40px;color:#8b6040;width:100%">⏳ Loading products...</div>';
-        try {
-            const res = await fetch('/api/products');
-            if (!res.ok) throw new Error(`Server error: ${res.status}`);
-            const products = await res.json();
-            renderProducts(products);
-        } catch (err) {
-            console.error('Failed to load products:', err);
-            grid.innerHTML = `<div style="text-align:center;padding:40px;color:var(--crimson);width:100%">
-                ⚠️ Could not load products. Make sure your Flask server is running at port 5000.<br>
-                <small style="color:#8b6040;margin-top:8px;display:block">${err.message}</small>
-            </div>`;
-        }
-    }
-
-    showPage('home');
-</script>
-<!-- Toast notification -->
 <div id="cart-toast" style="display:none;position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#2d6a4f;color:white;padding:12px 24px;border-radius:8px;z-index:9999;font-weight:600"></div>
 
-<!-- Cart Drawer -->
 <div id="cart-drawer" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9998;justify-content:flex-end">
     <div style="background:white;width:420px;max-width:100%;height:100%;display:flex;flex-direction:column;padding:24px;overflow-y:auto">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
@@ -557,5 +335,212 @@ function proceedToPayment() {
         </button>
     </div>
 </div>
+
+<script>
+    // ══════════════════════════════════════════
+    // CATEGORY SLUG → DISPLAY NAME MAP
+    // ══════════════════════════════════════════
+    const displayNames = {
+        'pure-pattu':      'Pure Pattu',
+        'half-mix-pattu':  'Half Mix Pattu',
+        'imitation-pattu': 'Imitation Pattu',
+        'cotton':          'Cotton Sarees'
+    };
+
+    // ══════════════════════════════════════════
+    // PAGE NAVIGATION
+    // ══════════════════════════════════════════
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+        const target = document.getElementById('page-' + pageId);
+        if (target) { target.classList.add('active'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        const link = document.querySelector(`.nav-links a[data-page="${pageId}"]`);
+        if (link) link.classList.add('active');
+        if (pageId === 'collections') loadProducts();
+    }
+
+    // ══════════════════════════════════════════
+    // FILTER BY CATEGORY
+    // ✅ Cards pass slug → fetch uses slug → matches MongoDB
+    // ══════════════════════════════════════════
+    function filterByCategory(slug, cardEl) {
+        const label = displayNames[slug] || slug;
+
+        // Highlight active card
+        document.querySelectorAll('.variety-card').forEach(c => c.classList.remove('active-filter'));
+        if (cardEl) cardEl.classList.add('active-filter');
+
+        // Update UI labels with nice display name
+        document.getElementById('products-section-label').textContent = 'Filtered Results';
+        document.getElementById('products-section-title').textContent = label;
+        document.getElementById('filter-bar').style.display = 'flex';
+        document.getElementById('filter-name').textContent = label;
+
+        // Scroll to products
+        document.getElementById('products-strip').scrollIntoView({ behavior: 'smooth' });
+
+        // Show loading
+        const grid = document.getElementById('products-grid');
+        grid.innerHTML = '<div style="text-align:center;padding:40px;color:#8b6040;width:100%">⏳ Loading products...</div>';
+
+        // ✅ Send slug — matches exactly what's saved in MongoDB
+        fetch(`/api/products?category=${encodeURIComponent(slug)}`)
+            .then(res => res.json())
+            .then(products => renderProducts(products))
+            .catch(err => {
+                grid.innerHTML = `<div style="text-align:center;padding:40px;color:red;">❌ Failed to load products.<br><small>${err.message}</small></div>`;
+                console.error(err);
+            });
+    }
+
+    // ══════════════════════════════════════════
+    // CLEAR FILTER
+    // ══════════════════════════════════════════
+    function clearFilter() {
+        document.querySelectorAll('.variety-card').forEach(c => c.classList.remove('active-filter'));
+        document.getElementById('filter-bar').style.display = 'none';
+        document.getElementById('products-section-label').textContent = 'Featured Products';
+        document.getElementById('products-section-title').textContent = 'Latest Arrivals';
+        loadProducts();
+    }
+
+    // ══════════════════════════════════════════
+    // LOAD ALL PRODUCTS
+    // ══════════════════════════════════════════
+    async function loadProducts() {
+        const grid = document.getElementById('products-grid');
+        grid.innerHTML = '<div style="text-align:center;padding:40px;color:#8b6040;width:100%">⏳ Loading products...</div>';
+        try {
+            const res = await fetch('/api/products');
+            if (!res.ok) throw new Error(`Server error: ${res.status}`);
+            const products = await res.json();
+            renderProducts(products);
+        } catch (err) {
+            console.error('Failed to load products:', err);
+            grid.innerHTML = `<div style="text-align:center;padding:40px;color:var(--crimson);width:100%">
+                ⚠️ Could not load products.<br>
+                <small style="color:#8b6040;margin-top:8px;display:block">${err.message}</small>
+            </div>`;
+        }
+    }
+
+    // ══════════════════════════════════════════
+    // RENDER PRODUCTS
+    // ══════════════════════════════════════════
+    function renderProducts(products) {
+        const grid = document.getElementById('products-grid');
+        if (!products || products.length === 0) {
+            grid.innerHTML = '<div style="text-align:center;padding:40px;color:#8b6040;width:100%">No products found in this category.</div>';
+            return;
+        }
+        grid.innerHTML = products.map(product => `
+            <div class="product-card">
+                <img src="${product.image_url}" alt="${product.name}"
+                     onerror="this.src='https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500&q=80'">
+                <div class="product-info">
+                    <span class="product-category-tag">${displayNames[product.category] || product.category || ''}</span>
+                    <h3>${product.name}</h3>
+                    <p class="product-price">₹ ${Number(product.price).toLocaleString('en-IN')}</p>
+                    <button class="add-to-cart-btn" onclick='addToCart(${JSON.stringify({name: product.name, price: product.price, image_url: product.image_url})})'>
+                        🛒 Add to Cart
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // ══════════════════════════════════════════
+    // CART
+    // ══════════════════════════════════════════
+    let cart = [];
+
+    function addToCart(product) {
+        const existing = cart.find(i => i.name === product.name);
+        if (existing) { existing.qty += 1; }
+        else { cart.push({ ...product, qty: 1 }); }
+        updateCartBadge();
+        showCartToast(product.name);
+    }
+
+    function updateCartBadge() {
+        const total = cart.reduce((sum, i) => sum + i.qty, 0);
+        document.getElementById('cart-badge').textContent = total;
+        document.getElementById('cart-badge').style.display = total > 0 ? 'inline-block' : 'none';
+    }
+
+    function showCartToast(name) {
+        const toast = document.getElementById('cart-toast');
+        toast.textContent = `✅ "${name}" added to cart!`;
+        toast.style.display = 'block';
+        setTimeout(() => toast.style.display = 'none', 2000);
+    }
+
+    function openCart() {
+        const itemsEl = document.getElementById('cart-items');
+        const totalEl = document.getElementById('cart-total');
+        if (cart.length === 0) {
+            itemsEl.innerHTML = '<p style="text-align:center;color:#8b6040;padding:20px">Your cart is empty 🛒</p>';
+            totalEl.textContent = '';
+        } else {
+            itemsEl.innerHTML = cart.map((item, i) => `
+                <div class="cart-item">
+                    <img src="${item.image_url}" onerror="this.src='https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=300&q=80'">
+                    <div class="cart-item-info">
+                        <strong>${item.name}</strong>
+                        <span>₹ ${Number(item.price).toLocaleString('en-IN')} × ${item.qty}</span>
+                    </div>
+                    <div class="cart-item-controls">
+                        <button onclick="changeQty(${i}, -1)">−</button>
+                        <span>${item.qty}</span>
+                        <button onclick="changeQty(${i}, 1)">+</button>
+                        <button onclick="removeFromCart(${i})" style="color:red;margin-left:8px">🗑</button>
+                    </div>
+                </div>
+            `).join('');
+            const total = cart.reduce((sum, i) => sum + (Number(i.price) * i.qty), 0);
+            totalEl.innerHTML = `<strong>Total: ₹ ${total.toLocaleString('en-IN')}</strong>`;
+        }
+        document.getElementById('cart-drawer').style.display = 'flex';
+    }
+
+    function closeCart() { document.getElementById('cart-drawer').style.display = 'none'; }
+
+    function changeQty(index, delta) {
+        cart[index].qty += delta;
+        if (cart[index].qty <= 0) cart.splice(index, 1);
+        updateCartBadge();
+        openCart();
+    }
+
+    function removeFromCart(index) {
+        cart.splice(index, 1);
+        updateCartBadge();
+        openCart();
+    }
+
+    function proceedToPayment() {
+        const total = cart.reduce((sum, i) => sum + (Number(i.price) * i.qty), 0);
+        var options = {
+            key: "YOUR_KEY_ID",
+            amount: total * 100,
+            currency: "INR",
+            name: "Shivashakti Pattu Sarees",
+            description: "Saree Purchase",
+            handler: function (response) {
+                alert("✅ Payment successful! ID: " + response.razorpay_payment_id);
+                cart = [];
+                updateCartBadge();
+                closeCart();
+            },
+            prefill: { name: "", email: "", contact: "" },
+            theme: { color: "#8b2020" }
+        };
+        var rzp = new Razorpay(options);
+        rzp.open();
+    }
+
+    showPage('home');
+</script>
 </body>
 </html>
