@@ -1,146 +1,83 @@
-// server.js
-require('dotenv').config();
+require("dotenv").config();
 
-const express = require('express');
-const cors = require('cors');
-const path = require('path');
-const multer = require('multer');
-const cloudinary = require('cloudinary').v2;
-const { MongoClient, ObjectId } = require('mongodb');
+const express = require("express");
+const path = require("path");
+const { MongoClient, ObjectId } = require("mongodb");
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
-// ═════════════════════════════════════
-// MIDDLEWARE
-// ═════════════════════════════════════
+// ================= MIDDLEWARE =================
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 
-// ═════════════════════════════════════
-// IMPORT AUTH ROUTES
-// ═════════════════════════════════════
-const authRoutes = require('./auth');
-app.use('/auth', authRoutes);
+// ================= AUTH ROUTES =================
+const authRoutes = require("./auth");
+app.use("/auth", authRoutes);
 
-// ═════════════════════════════════════
-// CLOUDINARY
-// ═════════════════════════════════════
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
+// ================= MONGODB =================
+const client = new MongoClient(process.env.MONGO_URI);
+let db;
+
+async function connectDB() {
+  await client.connect();
+  db = client.db("ecommerce");
+  console.log("MongoDB Connected");
+}
+connectDB();
+
+// ================= ROUTES =================
+
+// Home Page
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "shakti.html"));
 });
 
-// ═════════════════════════════════════
-// MONGODB
-// ═════════════════════════════════════
-let products_collection;
-
-MongoClient.connect(process.env.MONGO_URI)
-  .then(client => {
-    const db = client.db('shivashakti_db');
-    products_collection = db.collection('products');
-    console.log('✅ Connected to MongoDB');
-  })
-  .catch(err => console.error('MongoDB error:', err));
-
-// ═════════════════════════════════════
-// MULTER
-// ═════════════════════════════════════
-const upload = multer({ storage: multer.memoryStorage() });
-
-// ═════════════════════════════════════
-// ROUTES
-// ═════════════════════════════════════
-
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'shakti.html'));
+// Admin Page
+app.get("/admin", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "admin.html"));
 });
 
-// ✅ Upload Product WITH Category
-app.post('/api/upload', upload.single('image'), async (req, res) => {
+// ================= CATEGORY + PRODUCT =================
+
+// Add Product with Category
+app.post("/add-product", async (req, res) => {
   try {
     const { name, price, category } = req.body;
 
-    if (!category)
-      return res.status(400).json({ error: "Category is required" });
+    await db.collection("products").insertOne({
+      name,
+      price,
+      category,
+      createdAt: new Date()
+    });
 
-    cloudinary.uploader.upload_stream(
-      { resource_type: 'image' },
-      async (error, result) => {
-        if (error) return res.status(500).json({ error: error.message });
-
-        const product = {
-          name,
-          price,
-          category: category.trim().toLowerCase(),
-          image_url: result.secure_url
-        };
-
-        const inserted = await products_collection.insertOne(product);
-        product._id = inserted.insertedId.toString();
-
-        res.status(201).json(product);
-      }
-    ).end(req.file.buffer);
-
+    res.json({ success: true, message: "Product Added" });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// ✅ Get Products (Filter by Category)
-app.get('/api/products', async (req, res) => {
-  try {
-    const { category } = req.query;
-
-    let query = {};
-    if (category) {
-      query = { category: category.trim().toLowerCase() };
-    }
-
-    const docs = await products_collection.find(query).toArray();
-    docs.forEach(d => d._id = d._id.toString());
-
-    res.json(docs);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+// Get All Products
+app.get("/products", async (req, res) => {
+  const products = await db.collection("products").find().toArray();
+  res.json(products);
 });
 
-// ✅ Get All Categories
-app.get('/api/categories', async (req, res) => {
-  try {
-    const categories = await products_collection.distinct('category');
-    res.json(categories);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+// Get Products by Category
+app.get("/products/:category", async (req, res) => {
+  const category = req.params.category;
+
+  const products = await db
+    .collection("products")
+    .find({ category })
+    .toArray();
+
+  res.json(products);
 });
 
-// Delete Product
-app.delete('/api/products/:id', async (req, res) => {
-  try {
-    await products_collection.deleteOne({ _id: new ObjectId(req.params.id) });
-    res.json({ message: 'Deleted successfully' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Health Check
-app.get('/health', (req, res) => {
-  res.json({ status: 'Backend running' });
-});
-
-// ═════════════════════════════════════
-// START SERVER (ONE PORT ONLY)
-// ═════════════════════════════════════
-const PORT = process.env.PORT || 5000;
+// ================= START SERVER =================
 app.listen(PORT, () => {
-  console.log('====================================');
-  console.log(`Server running on PORT ${PORT}`);
-  console.log('====================================');
+  console.log(`Server running on port ${PORT}`);
 });
