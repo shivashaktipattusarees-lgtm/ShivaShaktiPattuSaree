@@ -4,11 +4,16 @@ const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const nodemailer = require('nodemailer');
-// ✅ Removed unused 'crypto' import
 
 const app = express();
 app.use(express.json());
-app.use(cors({ origin: ['http://127.0.0.1:5000', 'http://localhost:5000','https://shivashaktipattusaree.onrender.com'] }));
+app.use(cors({
+  origin: [
+    'http://127.0.0.1:5000',
+    'http://localhost:5000',
+    'https://shivashaktipattusaree.onrender.com'
+  ]
+}));
 
 // ══════════════════════════════════════════════
 // ENV VARIABLES
@@ -185,7 +190,12 @@ function popupHtml({ email = '', name = '', picture = '', error = '' }) {
 <body style="font-family:sans-serif;text-align:center;padding:60px;color:#555;background:#fdf6ec;">
   <p>${error ? '❌ ' + error : '✅ Signed in! Closing window…'}</p>
   <script>
-    const targets = ['http://127.0.0.1:5000', 'http://localhost:5000'];
+    // ✅ Post message to ALL possible origins — works on localhost AND Render
+    const targets = [
+      'http://127.0.0.1:5000',
+      'http://localhost:5000',
+      'https://shivashaktipattusaree.onrender.com'
+    ];
     targets.forEach(origin => {
       try { window.opener && window.opener.postMessage(${payload}, origin); } catch(e) {}
     });
