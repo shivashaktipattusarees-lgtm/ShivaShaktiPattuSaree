@@ -1,23 +1,28 @@
 {
-  "name": "downloads",
+  "name": "shivashakti-system",
   "version": "1.0.0",
-  "description": "--- base_model: EleutherAI/gpt-neo-1.3B library_name: peft pipeline_tag: text-generation tags: - base_model:adapter:EleutherAI/gpt-neo-1.3B - lora - transformers ---",
-  "main": "event-planning-bot.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "description": "Shivashakti Product + Auth Server with MongoDB, Cloudinary, Google OAuth and OTP",
+  "main": "server.js",
   "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "auth": "node auth.js",
+    "dev": "nodemon server.js",
+    "dev:auth": "nodemon auth.js"
+  },
+  "author": "BK Pavan Kumar",
+  "license": "ISC",
   "dependencies": {
-    "axios": "^1.13.6",
-    "cloudinary": "^2.9.0",
-    "cors": "^2.8.6",
-    "express": "^5.2.1",
-    "mongodb": "^7.1.0",
-    "multer": "^2.1.0",
-    "nodemailer": "^8.0.1"
+    "axios": "^1.6.8",
+    "cloudinary": "^1.41.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongodb": "^6.5.0",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.13"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
   }
 }
