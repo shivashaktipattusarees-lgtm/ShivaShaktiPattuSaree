@@ -389,9 +389,9 @@ function startGoogleLogin() {
 }
 
 function onOAuthMessage(event) {
-    // ✅ Only accept messages from our own origin
-    if (event.origin !== window.location.origin) return;
+    // ✅ Accept message from any origin — popup sends with '*' target
     const { email, name, picture, error } = event.data;
+    if (!email && !error) return; // ignore unrelated messages
     if (oauthPopup) oauthPopup.close();
     resetGoogleBtn();
     if (error) { showAlert('login-alert', '⚠️ Google Sign-In failed: ' + error); return; }
