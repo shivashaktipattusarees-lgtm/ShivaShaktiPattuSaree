@@ -8,7 +8,7 @@ const nodemailer = require('nodemailer');
 
 const app = express();
 app.use(express.json());
-app.use(cors({ origin: ['http://127.0.0.1:5000', 'http://localhost:5000'] }));
+app.use(cors({ origin: ['http://127.0.0.1:5000', 'http://localhost:5000','https://shivashaktipattusaree.onrender.com] }));
 
 // ══════════════════════════════════════════════
 // ENV VARIABLES
