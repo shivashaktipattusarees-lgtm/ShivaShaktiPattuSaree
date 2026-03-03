@@ -307,7 +307,6 @@
                 <label>Price (₹)</label>
                 <input type="number" id="p-price" placeholder="e.g., 4699" required min="1">
             </div>
-            <!-- ✅ CATEGORY DROPDOWN — INSIDE THE FORM -->
             <div class="form-group">
                 <label>Category</label>
                 <select id="p-category" required>
@@ -343,7 +342,9 @@ const ALLOWED_EMAILS   = [
     "shivashaktipattusarees@gmail.com",
     "second-admin@gmail.com",
 ];
-const AUTH_SERVER = "http://127.0.0.1:5001";
+
+// ✅ Empty string = relative URL — works on both localhost and Render automatically
+const AUTH_SERVER = "";
 
 let currentUser   = null;
 let timerInterval = null;
@@ -368,7 +369,8 @@ function startGoogleLogin() {
 
     const params = new URLSearchParams({
         client_id:     GOOGLE_CLIENT_ID,
-        redirect_uri:  AUTH_SERVER + '/auth/google/callback',
+        // ✅ Uses current page origin — works on localhost AND Render automatically
+        redirect_uri:  window.location.origin + '/auth/google/callback',
         response_type: 'code',
         scope:         'openid email profile',
         access_type:   'online',
@@ -387,8 +389,8 @@ function startGoogleLogin() {
 }
 
 function onOAuthMessage(event) {
-    const allowedOrigins = [AUTH_SERVER, window.location.origin];
-    if (!allowedOrigins.includes(event.origin)) return;
+    // ✅ Only accept messages from our own origin
+    if (event.origin !== window.location.origin) return;
     const { email, name, picture, error } = event.data;
     if (oauthPopup) oauthPopup.close();
     resetGoogleBtn();
@@ -412,6 +414,7 @@ function resetGoogleBtn() {
 
 async function requestOtp(email) {
     try {
+        // ✅ AUTH_SERVER is "" so this becomes fetch('/auth/send-otp')
         const res  = await fetch(AUTH_SERVER + '/auth/send-otp', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email}) });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Failed to send OTP');
@@ -425,6 +428,7 @@ async function verifyOtp() {
     const btn = document.getElementById('verify-btn');
     btn.disabled = true; btn.textContent = '⏳ Verifying…';
     try {
+        // ✅ AUTH_SERVER is "" so this becomes fetch('/auth/verify-otp')
         const res  = await fetch(AUTH_SERVER + '/auth/verify-otp', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email:currentUser.email, otp}) });
         const data = await res.json();
         if (res.ok && data.success) {
@@ -447,7 +451,7 @@ function clearOtpBoxes() {
     for (let i=0;i<6;i++){document.getElementById('otp'+i).value='';document.getElementById('otp'+i).classList.remove('filled');}
 }
 async function resendOtp() { document.getElementById('resend-btn').disabled=true; clearOtpBoxes(); const sent=await requestOtp(currentUser.email); if(sent) startTimer(300); }
-function cancelOtp() { currentUser=null; clearInterval(timerInterval); clearOtpBoxes(); showScreen('admin'); }
+function cancelOtp() { currentUser=null; clearInterval(timerInterval); clearOtpBoxes(); showScreen('login'); }
 function signOut()   { currentUser=null; clearInterval(timerInterval); showScreen('login'); }
 
 function startTimer(seconds) {
@@ -484,7 +488,6 @@ function previewImage(input) {
     }
 }
 
-// ✅ UPLOAD — sends name, price, category, image to Flask
 async function handleUpload(e) {
     e.preventDefault();
     const btn=document.getElementById('submitBtn'), status=document.getElementById('status');
@@ -514,7 +517,6 @@ async function handleUpload(e) {
     finally { btn.disabled=false; btn.textContent='✦ Upload Product'; }
 }
 
-// ✅ LOAD PRODUCTS — shows category tag in admin list
 async function loadProducts() {
     const list=document.getElementById('product-list');
     list.innerHTML='<div class="no-products">Loading…</div>';
