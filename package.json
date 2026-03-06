@@ -5,23 +5,19 @@
   "main": "server.js",
   "type": "commonjs",
   "scripts": {
-    "start": "concurrently \"node server.js\" \"node auth.js\"",
-    "dev": "concurrently \"nodemon server.js\" \"nodemon auth.js\"",
-    "start:server": "node server.js",
-    "start:auth": "node auth.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "author": "BK Pavan Kumar",
   "license": "ISC",
   "dependencies": {
     "axios": "^1.6.8",
     "cloudinary": "^1.41.0",
-    "concurrently": "^8.2.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "mongodb": "^6.5.0",
-    "multer": "^1.4.5-lts.1",
-    "nodemailer": "^6.9.13"
+    "multer": "^1.4.5-lts.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"
