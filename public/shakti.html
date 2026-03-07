@@ -349,6 +349,7 @@
             .quick-link { width: 100%; max-width: 260px; text-align: center; }
         }
     </style>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
 
@@ -556,6 +557,85 @@
     </div>
 </div>
 
+
+<!-- Delivery Details Modal -->
+<div id="delivery-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:10000;align-items:center;justify-content:center;padding:16px;">
+    <div style="background:white;width:100%;max-width:480px;border-radius:16px;padding:32px;box-shadow:0 40px 100px rgba(0,0,0,0.4);max-height:90vh;overflow-y:auto;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid #f5e9c8;">
+            <h2 style="font-family:'Cinzel',serif;color:#8b0000;font-size:1rem;letter-spacing:2px;">📦 Delivery Details</h2>
+            <button onclick="closeDeliveryModal()" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:#888;">✕</button>
+        </div>
+
+        <div style="margin-bottom:16px;">
+            <label style="display:block;font-family:'Cinzel',serif;font-size:0.65rem;letter-spacing:2px;color:#8b0000;text-transform:uppercase;margin-bottom:6px;">Full Name *</label>
+            <input id="del-name" type="text" placeholder="Your full name"
+                style="width:100%;padding:11px 14px;border:1px solid #e0d0b8;border-radius:8px;font-family:'Lato',sans-serif;font-size:0.95rem;outline:none;transition:border 0.2s;"
+                onfocus="this.style.borderColor='#c9a84c'" onblur="this.style.borderColor='#e0d0b8'">
+        </div>
+
+        <div style="margin-bottom:16px;">
+            <label style="display:block;font-family:'Cinzel',serif;font-size:0.65rem;letter-spacing:2px;color:#8b0000;text-transform:uppercase;margin-bottom:6px;">Phone Number *</label>
+            <input id="del-phone" type="tel" placeholder="10-digit mobile number"
+                style="width:100%;padding:11px 14px;border:1px solid #e0d0b8;border-radius:8px;font-family:'Lato',sans-serif;font-size:0.95rem;outline:none;transition:border 0.2s;"
+                onfocus="this.style.borderColor='#c9a84c'" onblur="this.style.borderColor='#e0d0b8'">
+        </div>
+
+        <div style="margin-bottom:16px;">
+            <label style="display:block;font-family:'Cinzel',serif;font-size:0.65rem;letter-spacing:2px;color:#8b0000;text-transform:uppercase;margin-bottom:6px;">Email (optional)</label>
+            <input id="del-email" type="email" placeholder="your@email.com"
+                style="width:100%;padding:11px 14px;border:1px solid #e0d0b8;border-radius:8px;font-family:'Lato',sans-serif;font-size:0.95rem;outline:none;transition:border 0.2s;"
+                onfocus="this.style.borderColor='#c9a84c'" onblur="this.style.borderColor='#e0d0b8'">
+        </div>
+
+        <div style="margin-bottom:16px;">
+            <label style="display:block;font-family:'Cinzel',serif;font-size:0.65rem;letter-spacing:2px;color:#8b0000;text-transform:uppercase;margin-bottom:6px;">Full Address *</label>
+            <textarea id="del-address" placeholder="House no, Street, Area, City..." rows="3"
+                style="width:100%;padding:11px 14px;border:1px solid #e0d0b8;border-radius:8px;font-family:'Lato',sans-serif;font-size:0.95rem;outline:none;resize:vertical;transition:border 0.2s;"
+                onfocus="this.style.borderColor='#c9a84c'" onblur="this.style.borderColor='#e0d0b8'"></textarea>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;">
+            <div>
+                <label style="display:block;font-family:'Cinzel',serif;font-size:0.65rem;letter-spacing:2px;color:#8b0000;text-transform:uppercase;margin-bottom:6px;">Pincode *</label>
+                <input id="del-pincode" type="text" placeholder="560001"
+                    style="width:100%;padding:11px 14px;border:1px solid #e0d0b8;border-radius:8px;font-family:'Lato',sans-serif;font-size:0.95rem;outline:none;transition:border 0.2s;"
+                    onfocus="this.style.borderColor='#c9a84c'" onblur="this.style.borderColor='#e0d0b8'">
+            </div>
+            <div>
+                <label style="display:block;font-family:'Cinzel',serif;font-size:0.65rem;letter-spacing:2px;color:#8b0000;text-transform:uppercase;margin-bottom:6px;">State *</label>
+                <input id="del-state" type="text" placeholder="Andhra Pradesh"
+                    style="width:100%;padding:11px 14px;border:1px solid #e0d0b8;border-radius:8px;font-family:'Lato',sans-serif;font-size:0.95rem;outline:none;transition:border 0.2s;"
+                    onfocus="this.style.borderColor='#c9a84c'" onblur="this.style.borderColor='#e0d0b8'">
+            </div>
+        </div>
+
+        <div id="del-error" style="display:none;background:#fde8e8;border:1px solid #f5c6c6;border-radius:8px;padding:10px 14px;color:#c0392b;font-size:0.84rem;margin-bottom:16px;"></div>
+
+        <button onclick="submitDeliveryAndPay()"
+            style="width:100%;background:linear-gradient(135deg,#8b0000,#5c0000);color:#e2c06a;border:none;padding:15px;border-radius:8px;font-family:'Cinzel',serif;font-size:0.8rem;letter-spacing:3px;cursor:pointer;box-shadow:0 6px 20px rgba(139,0,0,0.3);transition:all 0.2s;"
+            onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+            💳 PROCEED TO PAYMENT
+        </button>
+    </div>
+</div>
+
+<!-- Order Success Modal -->
+<div id="success-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:10001;align-items:center;justify-content:center;padding:16px;">
+    <div style="background:white;width:100%;max-width:420px;border-radius:16px;padding:40px 32px;text-align:center;box-shadow:0 40px 100px rgba(0,0,0,0.4);">
+        <div style="font-size:3rem;margin-bottom:16px;">🎉</div>
+        <h2 style="font-family:'Cinzel',serif;color:#8b0000;font-size:1rem;letter-spacing:3px;margin-bottom:8px;">ORDER PLACED!</h2>
+        <p style="color:#5a3a1a;font-size:0.95rem;line-height:1.7;margin-bottom:8px;">Payment successful! Your order has been confirmed.</p>
+        <p id="success-payment-id" style="font-family:'Cinzel',serif;font-size:0.72rem;color:#c9a84c;letter-spacing:2px;margin-bottom:24px;"></p>
+        <a id="success-whatsapp-btn"
+           href="#" target="_blank"
+           style="display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,#25D366,#1ebe5d);color:white;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:700;font-size:0.88rem;letter-spacing:1px;text-transform:uppercase;box-shadow:0 6px 20px rgba(37,211,102,0.35);margin-bottom:12px;">
+            💬 Confirm on WhatsApp
+        </a>
+        <br>
+        <button onclick="closeSuccessModal()" style="background:none;border:none;color:#8b6040;font-size:0.82rem;cursor:pointer;text-decoration:underline;margin-top:8px;">Close</button>
+    </div>
+</div>
+
 <footer>
     <p>© 2026 <span>Shivashakti Pattu Sarees</span> · Weavers Colony, Hindupur · All Rights Reserved</p>
 </footer>
@@ -759,7 +839,110 @@
     }
 
     function proceedToPayment() {
-        alert('Payment integration coming soon! Please contact us on WhatsApp to place your order.');
+        if (cart.length === 0) { alert('Your cart is empty!'); return; }
+        closeCart();
+        openDeliveryModal();
+    }
+
+    function openDeliveryModal() {
+        document.getElementById('delivery-modal').style.display = 'flex';
+    }
+
+    function closeDeliveryModal() {
+        document.getElementById('delivery-modal').style.display = 'none';
+    }
+
+    function submitDeliveryAndPay() {
+        const name    = document.getElementById('del-name').value.trim();
+        const phone   = document.getElementById('del-phone').value.trim();
+        const address = document.getElementById('del-address').value.trim();
+        const pincode = document.getElementById('del-pincode').value.trim();
+        const state   = document.getElementById('del-state').value.trim();
+        const email   = document.getElementById('del-email').value.trim();
+        const errEl   = document.getElementById('del-error');
+
+        // Validate
+        if (!name || !phone || !address || !pincode || !state) {
+            errEl.textContent = '⚠️ Please fill in all required fields.';
+            errEl.style.display = 'block'; return;
+        }
+        if (!/^[6-9]\d{9}$/.test(phone)) {
+            errEl.textContent = '⚠️ Please enter a valid 10-digit Indian mobile number.';
+            errEl.style.display = 'block'; return;
+        }
+        errEl.style.display = 'none';
+
+        const total = cart.reduce((sum, i) => sum + (Number(i.price) * i.qty), 0);
+        const itemsSummary = cart.map(i => `${i.name} x${i.qty}`).join(', ');
+
+        const options = {
+            key: 'YOUR_RAZORPAY_KEY_ID', // 🔑 Replace with your actual Razorpay Key ID
+            amount: total * 100,
+            currency: 'INR',
+            name: 'Shivashakti Pattu Sarees',
+            description: itemsSummary,
+            image: 'https://res.cloudinary.com/dwgxw2mlr/image/upload/v1772419246/dvb5pjvqauvaa9bucsol.jpg',
+            handler: function(response) {
+                closeDeliveryModal();
+                showSuccessModal(response.razorpay_payment_id, {
+                    name, phone, email, address, pincode, state, total, itemsSummary
+                });
+            },
+            prefill: { name, email, contact: phone },
+            notes: {
+                address: address + ', ' + pincode + ', ' + state,
+                items: itemsSummary
+            },
+            theme: { color: '#8b0000' },
+            modal: {
+                ondismiss: function() {
+                    console.log('Payment cancelled');
+                }
+            }
+        };
+
+        try {
+            const rzp = new Razorpay(options);
+            rzp.on('payment.failed', function(response) {
+                alert('❌ Payment failed: ' + response.error.description);
+            });
+            rzp.open();
+        } catch(e) {
+            alert('❌ Could not open Razorpay. Please check your Key ID.');
+        }
+    }
+
+    function showSuccessModal(paymentId, details) {
+        // Clear cart
+        cart = [];
+        updateCartBadges();
+
+        // Show payment ID
+        document.getElementById('success-payment-id').textContent = 'Payment ID: ' + paymentId;
+
+        // Build WhatsApp message with full order + delivery details
+        const msg = encodeURIComponent(
+            '🛍️ *New Order — Shivashakti Pattu Sarees*\n\n' +
+            '📦 *Items:*\n' + details.itemsSummary + '\n\n' +
+            '💰 *Total Paid: ₹' + Number(details.total).toLocaleString('en-IN') + '*\n' +
+            '🔖 Payment ID: ' + paymentId + '\n\n' +
+            '📬 *Delivery Address:*\n' +
+            'Name: ' + details.name + '\n' +
+            'Phone: ' + details.phone + '\n' +
+            'Address: ' + details.address + '\n' +
+            'Pincode: ' + details.pincode + '\n' +
+            'State: ' + details.state +
+            (details.email ? '\nEmail: ' + details.email : '')
+        );
+
+        document.getElementById('success-whatsapp-btn').href =
+            'https://wa.me/919916067676?text=' + msg;
+
+        document.getElementById('success-modal').style.display = 'flex';
+    }
+
+    function closeSuccessModal() {
+        document.getElementById('success-modal').style.display = 'none';
     }
 
     showPage('home');
