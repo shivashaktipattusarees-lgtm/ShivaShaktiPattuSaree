@@ -136,6 +136,42 @@ app.delete('/api/products/:id', async (req, res) => {
   }
 });
 
+// ✅ NEW: Update product (name, price, category, description, optional new image)
+app.put('/api/products/:id', upload.single('image'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, price, category, description } = req.body;
+
+    const updateData = { name, price, category, description };
+
+    // If a new image was uploaded, push it to Cloudinary
+    if (req.file) {
+      const result = await new Promise((resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream((error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          })
+          .end(req.file.buffer);
+      });
+      updateData.image_url = result.secure_url;
+    }
+
+    const updated = await products_collection.findOneAndUpdate(
+      { _id: new ObjectId(id) },
+      { $set: updateData },
+      { returnDocument: 'after' }
+    );
+
+    if (!updated) return res.status(404).json({ error: 'Product not found' });
+
+    console.log(`[API] Product updated: "${name}" — id: ${id}`);
+    res.json({ message: 'Product updated successfully!', product: updated });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // ═════════════════════════════════════
 // AUTH ROUTES — all in one server now
 // ═════════════════════════════════════
