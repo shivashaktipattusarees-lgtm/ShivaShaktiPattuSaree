@@ -26,25 +26,24 @@
             position: fixed; top: 0; left: 0; right: 0; z-index: 100;
             background: rgba(26,10,0,0.97); backdrop-filter: blur(8px);
             display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 40px; border-bottom: 1px solid rgba(201,168,76,0.3);
-            height: 70px;
+            padding: 14px 40px; border-bottom: 1px solid rgba(201,168,76,0.3);
         }
         .nav-logo {
             cursor: pointer; user-select: none; flex-shrink: 0;
         }
         .nav-logo img {
-            height: 52px; width: 52px; object-fit: cover;
+            height: 100px; width: 100px; object-fit: cover;
             vertical-align: middle; border-radius: 50%;
-            border: 2px solid rgba(201,168,76,0.4);
         }
         .nav-links {
-            display: flex; align-items: center; gap: 4px;
+            display: flex; align-items: center;
         }
         .nav-links a {
-            color: #e8d5b0; text-decoration: none; padding: 8px 14px;
-            font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase;
-            cursor: pointer; border-bottom: 2px solid transparent;
-            transition: color 0.3s, border-color 0.3s; white-space: nowrap;
+            color: #e8d5b0; text-decoration: none; margin-left: 30px;
+            font-size: 0.82rem; letter-spacing: 2px; text-transform: uppercase;
+            cursor: pointer; padding-bottom: 4px;
+            border-bottom: 2px solid transparent;
+            transition: color 0.3s, border-color 0.3s;
         }
         .nav-links a:hover { color: var(--gold); }
         .nav-links a.active { color: var(--gold); border-bottom-color: var(--gold); }
@@ -53,25 +52,16 @@
         .cart-icon-wrap {
             cursor: pointer; position: relative; display: inline-flex;
             align-items: center; justify-content: center;
-            margin-left: 8px; padding: 8px 12px;
-            background: linear-gradient(135deg, var(--crimson), #5c0000);
-            border-radius: 8px; border: 1px solid rgba(201,168,76,0.4);
-            transition: all 0.2s; box-shadow: 0 3px 12px rgba(139,0,0,0.4);
+            margin-left: 20px;
         }
-        .cart-icon-wrap:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(139,0,0,0.5);
-            border-color: var(--gold);
-        }
-        .cart-icon-wrap .cart-emoji { font-size: 1.1rem; }
+        .cart-icon-wrap .cart-emoji { font-size: 1.3rem; }
         .cart-icon-wrap #cart-badge {
             position: absolute; top: -8px; right: -8px;
-            background: var(--gold); color: var(--dark);
-            border-radius: 50%; width: 20px; height: 20px;
-            font-size: 0.65rem; font-weight: 800;
-            display: none; align-items: center; justify-content: center;
+            background: red; color: white;
+            border-radius: 50%; padding: 2px 6px;
+            font-size: 0.7rem; font-weight: bold;
+            display: none;
             font-family: 'Lato', sans-serif;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
         }
 
         /* ── HAMBURGER ── */
@@ -184,7 +174,7 @@
         #page-about { background: white; }
         .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 70px; align-items: center; }
         .about-visual { position: relative; }
-        .about-visual-inner { border-radius: 4px; overflow: hidden; box-shadow: 20px 20px 0 var(--gold-pale); }
+        .about-visual-inner { border-radius: 4px; overflow: hidden; box-shadow: 20px 20px 0 rgba(201,168,76,0.25); background: var(--dark3, #220e00); }
         .about-visual-inner img { width: 100%; height: 420px; object-fit: cover; display: block; }
         .about-badge {
             position: absolute; bottom: -20px; right: -20px;
@@ -385,7 +375,7 @@
     <div style="display:flex;align-items:center;gap:10px;margin-left:auto;">
         <div class="cart-icon-wrap" id="mobile-cart-btn" onclick="openCart()" style="display:none;">
             <span class="cart-emoji">🛒</span>
-            <span id="cart-badge-mobile">0</span>
+            <span id="cart-badge-mobile" style="position:absolute;top:-8px;right:-8px;background:red;color:white;border-radius:50%;padding:2px 6px;font-size:0.7rem;font-weight:bold;display:none;">0</span>
         </div>
         <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()">
             <span></span><span></span><span></span>
@@ -437,7 +427,11 @@
         <div class="about-grid">
             <div class="about-visual">
                 <div class="about-visual-inner">
-                    <img src="https://images.unsplash.com/photo-1583391733956-6c78276477e1?w=700&q=80" alt="Weaving loom">
+                    <img 
+                         src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=700&q=80"
+                         alt="Silk Saree"
+                         style="width:100%;height:420px;object-fit:cover;display:block;background:#1a0a00;"
+                         onerror="this.onerror=null;this.style.height='420px';this.style.objectFit='cover';">
                 </div>
                 <div class="about-badge">
                     <div class="years">35+</div>
