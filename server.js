@@ -309,6 +309,11 @@ app.get('/health', (req, res) => {
   res.json({ status: 'server running', port: process.env.PORT || 5000 });
 });
 
+// ✅ Safely expose Razorpay Key ID to frontend (Key ID is public-safe, never expose secret)
+app.get('/api/razorpay-key', (req, res) => {
+  res.json({ key: process.env.RAZORPAY_KEY_ID });
+});
+
 // ═════════════════════════════════════
 // START SERVER — single port only
 // ═════════════════════════════════════
