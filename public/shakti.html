@@ -852,7 +852,7 @@
         document.getElementById('delivery-modal').style.display = 'none';
     }
 
-    function submitDeliveryAndPay() {
+    async function submitDeliveryAndPay() {
         const name    = document.getElementById('del-name').value.trim();
         const phone   = document.getElementById('del-phone').value.trim();
         const address = document.getElementById('del-address').value.trim();
@@ -875,8 +875,12 @@
         const total = cart.reduce((sum, i) => sum + (Number(i.price) * i.qty), 0);
         const itemsSummary = cart.map(i => `${i.name} x${i.qty}`).join(', ');
 
+        // Fetch key from server
+        const keyRes = await fetch('/api/razorpay-key');
+        const keyData = await keyRes.json();
+
         const options = {
-            key: 'YOUR_RAZORPAY_KEY_ID', // 🔑 Replace with your actual Razorpay Key ID
+            key: keyData.key,
             amount: total * 100,
             currency: 'INR',
             name: 'Shivashakti Pattu Sarees',
