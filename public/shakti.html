@@ -54,14 +54,12 @@
             align-items: center; justify-content: center;
             margin-left: 20px;
         }
-        .cart-icon-wrap .cart-emoji { font-size: 1.3rem; }
-        .cart-icon-wrap #cart-badge {
-            position: absolute; top: -8px; right: -8px;
-            background: red; color: white;
-            border-radius: 50%; padding: 2px 6px;
-            font-size: 0.7rem; font-weight: bold;
+
+        /* Mobile right section — hidden on desktop */
+        .mobile-nav-right {
             display: none;
-            font-family: 'Lato', sans-serif;
+            align-items: center;
+            gap: 12px;
         }
 
         /* ── HAMBURGER ── */
@@ -267,7 +265,8 @@
         @media (max-width: 768px) {
             /* Navbar */
             nav { padding: 10px 16px; }
-            .nav-links { display: none; } /* Hide desktop links */
+            #desktop-nav { display: none; } /* Hide desktop links on mobile */
+            .mobile-nav-right { display: flex; } /* Show mobile cart+hamburger */
             .hamburger { display: flex; }
 
             /* Home hero */
@@ -354,28 +353,30 @@
 <body>
 
 <nav>
+    <!-- Logo -->
     <div class="nav-logo" onclick="showPage('home')">
         <img src="https://res.cloudinary.com/dwgxw2mlr/image/upload/v1772419246/dvb5pjvqauvaa9bucsol.jpg"
-             alt="Shivashakti Logo">
+             alt="Shivashakti Logo"
+             style="height:100px;width:100px;object-fit:cover;vertical-align:middle;border-radius:50%;">
     </div>
 
-    <!-- Desktop nav links -->
-    <div class="nav-links">
+    <!-- Desktop nav links (hidden on mobile via CSS) -->
+    <div class="nav-links" id="desktop-nav">
         <a onclick="showPage('home')" data-page="home">Home</a>
         <a onclick="showPage('about')" data-page="about">About Us</a>
         <a onclick="showPage('collections')" data-page="collections">Collections</a>
         <a onclick="showPage('contact')" data-page="contact">Contact</a>
         <div class="cart-icon-wrap" onclick="openCart()">
-            <span class="cart-emoji">🛒</span>
-            <span id="cart-badge">0</span>
+            <span style="font-size:1.3rem;cursor:pointer;">🛒</span>
+            <span id="cart-badge" style="display:none;position:absolute;top:-8px;right:-8px;background:red;color:white;border-radius:50%;padding:2px 6px;font-size:0.7rem;font-weight:bold;">0</span>
         </div>
     </div>
 
-    <!-- Mobile: cart + hamburger -->
-    <div style="display:flex;align-items:center;gap:10px;margin-left:auto;">
-        <div class="cart-icon-wrap" id="mobile-cart-btn" onclick="openCart()" style="display:none;">
-            <span class="cart-emoji">🛒</span>
-            <span id="cart-badge-mobile" style="position:absolute;top:-8px;right:-8px;background:red;color:white;border-radius:50%;padding:2px 6px;font-size:0.7rem;font-weight:bold;display:none;">0</span>
+    <!-- Mobile only: cart + hamburger (hidden on desktop via CSS) -->
+    <div class="mobile-nav-right">
+        <div class="cart-icon-wrap" onclick="openCart()">
+            <span style="font-size:1.3rem;cursor:pointer;">🛒</span>
+            <span id="cart-badge-mobile" style="display:none;position:absolute;top:-8px;right:-8px;background:red;color:white;border-radius:50%;padding:2px 6px;font-size:0.7rem;font-weight:bold;">0</span>
         </div>
         <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()">
             <span></span><span></span><span></span>
@@ -608,16 +609,7 @@
     }
 
     // Show mobile cart button on small screens
-    function checkMobileCart() {
-        const mobileCart = document.getElementById('mobile-cart-btn');
-        if (window.innerWidth <= 768) {
-            mobileCart.style.display = 'inline-flex';
-        } else {
-            mobileCart.style.display = 'none';
-        }
-    }
-    checkMobileCart();
-    window.addEventListener('resize', checkMobileCart);
+    // Mobile layout handled by CSS only - no JS needed
 
     /* ══ NAVIGATION ══ */
     function showPage(pageId) {
@@ -700,17 +692,12 @@
 
     function updateCartBadges() {
         const total = cart.reduce((sum, i) => sum + i.qty, 0);
-        const badge = document.getElementById('cart-badge');
-        const badgeMobile = document.getElementById('cart-badge-mobile');
-        if (total > 0) {
+        // Safely update all cart badges (desktop + mobile)
+        document.querySelectorAll('#cart-badge, #cart-badge-mobile').forEach(badge => {
+            if (!badge) return;
             badge.textContent = total;
-            badge.style.display = 'inline-flex';
-            badgeMobile.textContent = total;
-            badgeMobile.style.display = 'inline-flex';
-        } else {
-            badge.style.display = 'none';
-            badgeMobile.style.display = 'none';
-        }
+            badge.style.display = total > 0 ? 'inline-block' : 'none';
+        });
     }
 
     function addToCart(product) {
