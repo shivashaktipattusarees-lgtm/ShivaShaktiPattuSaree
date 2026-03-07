@@ -1184,7 +1184,55 @@ function previewEditImage(input){
   if(input.files&&input.files[0])document.getElementById('edit-dz-text').innerHTML=`<strong>${input.files[0].name}</strong> selected`;
 }
 
-async function saveEdit(){
+function askDelete_OLD(name){
+  deleteTarget=name;
+  document.getElementById('confirm-prod-name').textContent=name;
+  document.getElementById('confirm-overlay').classList.add('open');
+}
+
+// REPLACE WITH:
+function askDelete(escaped){
+  const p=JSON.parse(unescape(escaped));
+  deleteTarget=p;
+  document.getElementById('confirm-prod-name').textContent=p.name;
+  document.getElementById('confirm-overlay').classList.add('open');
+}
+
+
+// ────────────────────────────────────────────────────────────────
+// FIX 3: confirmDelete — replace the entire function
+// ────────────────────────────────────────────────────────────────
+
+// FIND THIS:
+async function confirmDelete_OLD(){
+  if(!deleteTarget)return;
+  closeConfirm();
+  try{
+    const res=await fetch('/api/delete',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:deleteTarget})});
+    if(res.ok)await loadProducts();
+    else alert('Delete failed.');
+  }catch(err){alert('Delete failed: '+err.message);}
+}
+
+// REPLACE WITH:
+async function confirmDelete(){
+  if(!deleteTarget)return;
+  const id=deleteTarget._id;
+  closeConfirm();
+  try{
+    const res=await fetch(`/api/products/${id}`,{method:'DELETE'});
+    if(res.ok)await loadProducts();
+    else alert('Delete failed.');
+  }catch(err){alert('Delete failed: '+err.message);}
+}
+
+
+// ────────────────────────────────────────────────────────────────
+// FIX 4: saveEdit — replace the entire function
+// ────────────────────────────────────────────────────────────────
+
+// FIND THIS:
+async function saveEdit_OLD(){
   if(!editingProduct)return;
   const fd=new FormData();
   fd.append('original_name',editingProduct.name);
@@ -1201,41 +1249,27 @@ async function saveEdit(){
   }catch(err){alert('Save failed: '+err.message);}
 }
 
-/* ══════════════════════════════════════
-   DELETE
-══════════════════════════════════════ */
-function askDelete(name){
-  deleteTarget=name;
-  document.getElementById('confirm-prod-name').textContent=name;
-  document.getElementById('confirm-overlay').classList.add('open');
-}
-function closeConfirm(){document.getElementById('confirm-overlay').classList.remove('open');deleteTarget=null;}
-async function confirmDelete(){
-  if(!deleteTarget)return;
-  closeConfirm();
+// REPLACE WITH:
+async function saveEdit(){
+  if(!editingProduct)return;
+  const fd=new FormData();
+  fd.append('name',        document.getElementById('edit-name').value.trim());
+  fd.append('price',       document.getElementById('edit-price').value.trim());
+  fd.append('category',    document.getElementById('edit-category').value);
+  fd.append('description', document.getElementById('edit-desc').value.trim());
+  const imgFile=document.getElementById('edit-image').files[0];
+  if(imgFile)fd.append('image',imgFile);
   try{
-    const res=await fetch('/api/delete',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:deleteTarget})});
-    if(res.ok)await loadProducts();
-    else alert('Delete failed.');
-  }catch(err){alert('Delete failed: '+err.message);}
+    const res=await fetch(`/api/products/${editingProduct._id}`,{method:'PUT',body:fd});
+    if(res.ok){closeEditModal();await loadProducts();}
+    else{const d=await res.json();alert('Save failed: '+(d.error||'unknown error'));}
+  }catch(err){alert('Save failed: '+err.message);}
 }
 
-/* ══════════════════════════════════════
-   DRAG & DROP
-══════════════════════════════════════ */
-const dz=document.getElementById('dropZone');
-if(dz){
-  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over');});
-  dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
-  dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag-over');});
-}
 
-/* ══════════════════════════════════════
-   DEMO MODE (no backend)
-   Comment out enterApp() call below to disable
-══════════════════════════════════════ */
-// Uncomment the line below to skip login for testing:
-// window.addEventListener('DOMContentLoaded', ()=>{ currentUser={email:'demo@demo.com',name:'Demo Admin',picture:''}; enterApp(); });
+
+
+
 </script>
 </body>
 </html>
